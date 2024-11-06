@@ -1,0 +1,38 @@
+# Declare files that will always have LF line endings on checkout.
+# Source code files
+*.java        text eol=lf
+*.xml         text eol=lf
+*.properties  text eol=lf
+*.yml         text eol=lf
+*.json        text eol=lf
+*.yaml        text eol=lf
+
+# Script files
+*.sh          text eol=lf
+*.py          text eol=lf
+*.bat         text eol=lf
+*.cmd         text eol=lf
+
+# EMarkdown and documentation files 
+*.md          text eol=lf
+*.txt         text eol=lf
+*.adoc        text eol=lf
+
+# Config files
+*.gitattributes  text eol=lf
+*.gitignore      text eol=lf
+
+# Build and dependency management files (Maven and Docker)
+pom.xml         text eol=lf
+Dockerfile      text eol=lf
+*.dockerignore  text eol=lf
+
+# Treat compiled or binary files as binary
+*.class       binary
+*.jar         binary
+*.war         binary
+*.png         binary
+*.jpg         binary
+*.gif         binary
+*.pdf         binary
+
