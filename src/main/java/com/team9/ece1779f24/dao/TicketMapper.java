@@ -1,8 +1,7 @@
 package com.team9.ece1779f24.dao;
 
 import com.team9.ece1779f24.model.Ticket;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 
 import java.util.List;
@@ -18,4 +17,15 @@ public interface TicketMapper {
     int createTicket(Ticket ticket);*/
     @Select("SELECT * FROM tickets WHERE booking_id = #{bookingId}")
     List<Ticket> getTicketsByBookingId(Long flightId);
+    @Select("SELECT * FROM tickets WHERE id = #{ticketId}")
+    Ticket getTicketByTicketId(Long ticketId);
+    @Insert("INSERT INTO tickets (flight_id, passenger_id, booking_id, ticket_number, ticket_class, status, seat_number, price) " +
+            "VALUES (#{flightId}, #{passengerId}, #{bookingId}, #{ticketNumber}, #{ticketClass}, #{status}, #{seatNumber}, #{price})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    void createNewTicket(Ticket ticket);
+
+    @Select("SELECT COUNT(*) > 0 FROM tickets WHERE ticket_number = #{ticketNumber}")
+    boolean existsByTicketNumber(String ticketNumber);
+    /*@Select("SELECT COUNT(*) > 0 FROM tickets WHERE booking_id = #{bookingId}")
+    boolean existsByBookingId(Long bookingId);*/
 }
