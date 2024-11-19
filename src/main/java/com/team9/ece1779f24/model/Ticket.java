@@ -19,5 +19,6 @@ public class Ticket {
     private String seatNumber;
     private BigDecimal price;
     private LocalDateTime issuedAt;
-
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
