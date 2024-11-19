@@ -49,4 +49,8 @@ public class TicketQueryService {
     }
 
 
+    public TicketDTO findTicketByTicketNumber(String ticketNumber) {
+        Ticket ticket = ticketMapper.getTicketByTicketNumber(ticketNumber);
+        return ticket != null ?convertToTicketDTO(ticket) : null;
+    }
 }

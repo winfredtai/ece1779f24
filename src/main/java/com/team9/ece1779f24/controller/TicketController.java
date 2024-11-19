@@ -44,6 +44,15 @@ public class TicketController {
         }
         return new CommonResponse<>(Status.OK, ticket);
     }
+    @GetMapping("findByTicketNumber/{ticketNumber}")
+    public CommonResponse<TicketDTO> getTicketsByTicketNumber(@PathVariable String ticketNumber) throws ApplicationException {
+        log.info("Retrieving tickets for ticket number: {}", ticketNumber);
+        TicketDTO ticket = ticketQueryService.findTicketByTicketNumber(ticketNumber);
+        if (ticket == null) {
+            throw new ApplicationException(Status.NOTICKETFOUND);
+        }
+        return new CommonResponse<>(Status.OK, ticket);
+    }
     @PostMapping("/createTicket")
     public CommonResponse<Ticket> createTicket(@RequestBody Ticket ticket) throws ApplicationException {
         log.info("Creating ticket: {}", ticket);

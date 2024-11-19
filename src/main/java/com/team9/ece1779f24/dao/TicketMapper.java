@@ -26,6 +26,8 @@ public interface TicketMapper {
 
     @Select("SELECT COUNT(*) > 0 FROM tickets WHERE ticket_number = #{ticketNumber}")
     boolean existsByTicketNumber(String ticketNumber);
+    @Select("SELECT * FROM tickets WHERE ticket_number = #{ticketNumber}")
+    Ticket getTicketByTicketNumber(String ticketNumber);
     /*@Select("SELECT COUNT(*) > 0 FROM tickets WHERE booking_id = #{bookingId}")
     boolean existsByBookingId(Long bookingId);*/
 }
