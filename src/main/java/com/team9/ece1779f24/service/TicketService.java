@@ -2,17 +2,26 @@ package com.team9.ece1779f24.service;
 
 import com.team9.ece1779f24.dao.TicketMapper;
 import com.team9.ece1779f24.enums.Status;
+import com.team9.ece1779f24.enums.TicketStatus;
+import com.team9.ece1779f24.event.TicketCancellationEvent;
+import com.team9.ece1779f24.event.TicketCreationEvent;
 import com.team9.ece1779f24.exception.ApplicationException;
 import com.team9.ece1779f24.model.Ticket;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.Random;
 
 @Slf4j
 @Service
+@Validated
 public class TicketService {
     private final TicketMapper ticketMapper;
 
@@ -21,21 +30,20 @@ public class TicketService {
     }
 
     @Transactional
-    public void createTicket(Ticket ticket) throws ApplicationException {
-        validateField(ticket.getFlightId(), "Flight ID");
-        validateField(ticket.getPassengerId(), "Passenger ID");
-        validateField(ticket.getBookingId(), "Booking ID");
-        validateField(ticket.getTicketClass(), "Ticket Class");
-        validateField(ticket.getStatus(), "Status");
-        validateField(ticket.getPrice(), "Price");
+    public void createTicket(@Valid Ticket ticket) throws ApplicationException {
         // Generate and set a unique ticket number
         String uniqueTicketNumber = generateUniqueTicketNumber();
         ticket.setTicketNumber(uniqueTicketNumber);
-
+        try{
         // Save the ticket
-        ticketMapper.createNewTicket(ticket);
+        ticketMapper.createNewTicket(ticket);}
+        catch (DataAccessException dae){
+            log.error("Database error in method: {}", dae.getMessage(), dae);
+            throw new ApplicationException(Status.DATABASE_ERROR);
+        }
     }
-    private String generateUniqueTicketNumber() throws ApplicationException {
+
+    private String generateUniqueTicketNumber() {
         Random random = new Random();
         String ticketNumber;
 
@@ -46,6 +54,7 @@ public class TicketService {
 
         return ticketNumber;
     }
+
     private String generateRandomString(Random random, int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder sb = new StringBuilder();
@@ -54,56 +63,53 @@ public class TicketService {
         }
         return sb.toString();
     }
-    public void validateField(Object field, String fieldName) throws ApplicationException {
-        if (field == null || (field instanceof String && ((String) field).isEmpty())) {
-            log.warn("{} is missing or invalid", fieldName);
-            throw new ApplicationException(Status.MISSING_FIELD);
-        }
-        if (field instanceof BigDecimal && ((BigDecimal) field).compareTo(BigDecimal.ZERO) < 0) {
-            log.warn("{} is negative", fieldName);
-            throw new ApplicationException(Status.MISSING_FIELD);
+
+    private void validateEvent(TicketCreationEvent event) {
+        Objects.requireNonNull(event, "Event cannot be null");
+        Objects.requireNonNull(event.getBookingId(), "BookingId cannot be null");
+        Objects.requireNonNull(event.getFlightId(), "FlightId cannot be null");
+        Objects.requireNonNull(event.getPassengerId(), "PassengerId cannot be null");
+        Objects.requireNonNull(event.getTicketClass(), "TicketClass cannot be null");
+
+        if (event.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Price must be positive");
         }
     }
-        /*
+
     @EventListener
-    public void handleTicketCreation(TicketCreationEvent event) {
+    public void handleTicketCreation(@Valid TicketCreationEvent event) {
         log.info("Received ticket creation event for booking: {}", event.getBookingId());
-        try {
-            Ticket ticket = new Ticket();
-            ticket.setBookingId(event.getBookingId());
-            ticket.setFlightId(event.getFlightId());
-            ticket.setPassengerId(event.getPassengerId());
-            ticket.setTicketNumber(generateTicketNumber());
-            ticket.setTicketClass(event.getTicketClass());
-            ticket.setStatus(TicketStatus.CONFIRMED);
-            ticket.setPrice(event.getPrice());
-
-            ticketMapper.createTicket(ticket);
-
-            log.info("Successfully created ticket: {}", ticket.getTicketNumber());
-        } catch (Exception e) {
-            log.error("Failed to create ticket for booking: {}", event.getBookingId(), e);
-            // You might want to handle the failure appropriately
-            throw e;
-        }
+        Ticket ticket = new Ticket();
+        ticket.setFlightId(event.getFlightId());
+        ticket.setPassengerId(event.getPassengerId());
+        ticket.setBookingId(event.getBookingId());
+        ticket.setTicketNumber(generateUniqueTicketNumber());
+        ticket.setTicketClass(event.getTicketClass());
+        ticket.setStatus(TicketStatus.CONFIRMED);
+        ticket.setPrice(event.getPrice());
+        ticketMapper.createNewTicket(ticket);
+        log.info("Successfully created ticket: {}", ticket.getTicketNumber());
     }
 
+
     @EventListener
-    public void handleTicketCancellation(TicketCancellationEvent event) {
+    public void handleTicketCancellation(TicketCancellationEvent event) throws ApplicationException {
         log.info("Received cancellation request for booking: {}, tickets: {}",
-                event.getBookingId(), event.getTicketIds());
+                event.getBookingId(), event.getTicketNumbers());
 
         try {
-            for (Long ticketId : event.getTicketIds()) {
+            for (String ticketNumber : event.getTicketNumbers()) {
                 // Verify ticket belongs to this booking
-                Ticket ticket = ticketMapper.findById(ticketId);
+                Ticket ticket = ticketMapper.getTicketByTicketNumber(ticketNumber);
                 if (ticket != null && ticket.getBookingId().equals(event.getBookingId())) {
                     // Cancel the ticket
-                    ticketMapper.cancelTicket(ticketId, TicketStatus.CANCELLED);
-                    log.info("Cancelled ticket: {}", ticketId);
+                    ticketMapper.changeTicketStatus(ticketNumber, TicketStatus.CANCELLED);
+                    log.info("Cancelled ticket: {}", ticketNumber);
                 } else {
                     log.warn("Ticket {} not found or doesn't belong to booking {}",
-                            ticketId, event.getBookingId());
+                        ticketNumber, event.getBookingId());
+                    throw new ApplicationException(Status.TICKET_NFORNFINBOOKING_ERROR);
+
                 }
             }
         } catch (Exception e) {
@@ -111,9 +117,6 @@ public class TicketService {
             throw e;
         }
     }
-    private String generateTicketNumber() {
-        // Format: TKT + Year + 6 random digits
-        return "TKT" + LocalDateTime.now().getYear() +
-                String.format("%06d", new Random().nextInt(999999));
-    }*/
+
+
 }

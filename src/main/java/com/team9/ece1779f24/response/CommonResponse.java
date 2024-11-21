@@ -13,7 +13,10 @@ public class CommonResponse<T> {
         this.code = status.getCode();
         this.message = status.getMessage();
     }
-
+    public CommonResponse(Status status, String message) {
+        this.code = status.getCode();
+        this.message = message;
+    }
     public CommonResponse(Status status, T data) {
         this.code = status.getCode();
         this.message = status.getMessage();

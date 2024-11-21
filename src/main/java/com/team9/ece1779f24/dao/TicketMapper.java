@@ -1,5 +1,6 @@
 package com.team9.ece1779f24.dao;
 
+import com.team9.ece1779f24.enums.TicketStatus;
 import com.team9.ece1779f24.model.Ticket;
 import org.apache.ibatis.annotations.*;
 
@@ -28,6 +29,9 @@ public interface TicketMapper {
     boolean existsByTicketNumber(String ticketNumber);
     @Select("SELECT * FROM tickets WHERE ticket_number = #{ticketNumber}")
     Ticket getTicketByTicketNumber(String ticketNumber);
+    @Update("UPDATE tickets SET status = #{status} WHERE ticket_number = #{ticketNumber}")
+    void changeTicketStatus(String ticketNumber, TicketStatus status);
+
     /*@Select("SELECT COUNT(*) > 0 FROM tickets WHERE booking_id = #{bookingId}")
     boolean existsByBookingId(Long bookingId);*/
 }
