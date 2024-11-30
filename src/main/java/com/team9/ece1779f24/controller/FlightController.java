@@ -2,6 +2,7 @@ package com.team9.ece1779f24.controller;
 
 import com.team9.ece1779f24.model.Flight;
 import com.team9.ece1779f24.payload.FlightDTO;
+import com.team9.ece1779f24.repositories.FlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,18 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/flights")
 public class FlightController {
-    /*private final FlightService flightService;
-
-    @Autowired
-    public FlightController(FlightService flightService) {
-        this.flightService = flightService;
-    }*/
-
-    @GetMapping
-    public ResponseEntity<List<FlightDTO>> getAllFlights() {
-        // Implementation
-        return ResponseEntity.ok().build();
-    }
 
     @GetMapping("/{flightNumber}")
     public ResponseEntity<FlightDTO> getFlightByFlightNumber(@PathVariable String flightNumber) {

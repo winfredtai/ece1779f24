@@ -2,6 +2,7 @@ package com.team9.ece1779f24.controller;
 
 import com.team9.ece1779f24.enums.TicketStatusEnum;
 import com.team9.ece1779f24.model.Ticket;
+import com.team9.ece1779f24.payload.FlightResponse;
 import com.team9.ece1779f24.payload.TicketDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class TicketController {
     }*/
 
     @GetMapping
-    public ResponseEntity<List<TicketDTO>> getAllTickets() {
+    public ResponseEntity<FlightResponse> getAllTickets() {
         // Implementation
         return ResponseEntity.ok().build();
     }
