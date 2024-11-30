@@ -28,7 +28,7 @@ public class Flight {
     private LocalDateTime departureTime;
 
     @Column(nullable = false)
-    private LocalDateTime arrivalTime;
+    private LocalDateTime arrivalTime ;
 
     @Column(nullable = false, length = 50)
     private String departureCity;

@@ -1,50 +1,109 @@
 package com.team9.ece1779f24.controller;
 
-import com.team9.ece1779f24.model.Flight;
-import com.team9.ece1779f24.payload.FlightDTO;
-import com.team9.ece1779f24.repositories.FlightRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.team9.ece1779f24.config.AppConstants;
+import com.team9.ece1779f24.payload.*;
+import com.team9.ece1779f24.service.FlightService;
+import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
 
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/flights")
+@RequestMapping("/api")
 public class FlightController {
 
-    @GetMapping("/{flightNumber}")
-    public ResponseEntity<FlightDTO> getFlightByFlightNumber(@PathVariable String flightNumber) {
-        // Implementation
-        return ResponseEntity.ok().build();
+    private final FlightService flightService;
+
+    public FlightController(FlightService flightService) {
+        this.flightService = flightService;
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<FlightDTO>> searchFlights(
+    @GetMapping("/public/flights/all")
+    public ResponseEntity<FlightResponse> getAllFlights(
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_FLIGHT_BY, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
+        FlightResponse flightResponse = flightService.getAllFlights(pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(flightResponse, HttpStatus.OK);
+    }
+    @GetMapping("/public/flights/search")
+    public ResponseEntity<FlightResponse> searchFlights(
             @RequestParam String departureCity,
             @RequestParam String arrivalCity,
-            @RequestParam LocalDateTime departureDate) {
-        // Implementation
-        return ResponseEntity.ok().build();
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(defaultValue = AppConstants.SORT_FLIGHT_BY, required = false) String sortBy,
+            @RequestParam(defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder
+    ) {
+        FlightResponse flightResponse = flightService.searchFlights(
+                departureCity, arrivalCity, date, pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(flightResponse, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<FlightDTO> createFlight(@RequestBody Flight flight) {
-        // Implementation
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    @GetMapping("/public/flights/{flightNumber}")
+    public ResponseEntity<FlightDTO> getFlightByFlightNumber(
+            @PathVariable String flightNumber
+    ) {
+        FlightDTO flightDTO = flightService.getFlightByFlightNumber(flightNumber);
+        return new ResponseEntity<>(flightDTO, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<FlightDTO> updateFlight(@PathVariable Long id, @RequestBody Flight flight) {
-        // Implementation
-        return ResponseEntity.ok().build();
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFlight(@PathVariable Long id) {
-        // Implementation
-        return ResponseEntity.noContent().build();
+    @PostMapping("/admin/flights/create")
+    public ResponseEntity<FlightDTO> createFlight(@Valid @RequestBody FlightDTO flightDTO) {
+        FlightDTO createdFlight = flightService.createFlight(flightDTO);
+        return new ResponseEntity<>(createdFlight, HttpStatus.CREATED);
+    }
+    @PutMapping("/admin/flights/update/{flightId}")
+    public ResponseEntity<FlightDTO> updateFlight(
+            @PathVariable Long flightId,
+            @Valid @RequestBody FlightDTO flightDTO) {
+        FlightDTO updatedFlight = flightService.updateFlight(flightId, flightDTO);
+        return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
+    }
+    @PutMapping("/admin/flights/updatePlane/{flightId}")
+    public ResponseEntity<FlightDTO> updateFlightPlane(
+              @PathVariable Long flightId,
+              @Valid @RequestBody FlightPlaneUpdateDTO updateDTO) {
+        FlightDTO updatedFlight = flightService.updateFlightPlane(flightId, updateDTO);
+        return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
+    }
+    @PutMapping("/admin/flights/changeFlightNumber/{flightId}")
+    public ResponseEntity<FlightDTO> updateFlightNumber(
+            @PathVariable Long flightId,
+            @Valid @RequestBody FlightNumberUpdateDTO updateDTO) {
+        FlightDTO updatedFlight = flightService.updateFlightNumber(flightId, updateDTO);
+        return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
+    }
+    @PutMapping("/admin/flights/changeFlightTime/{flightId}")
+    public ResponseEntity<FlightDTO> updateFlightTime(
+            @PathVariable Long flightId,
+            @Valid @RequestBody FlightTimeUpdateDTO updateDTO) {
+        FlightDTO updatedFlight = flightService.updateFlightTime(flightId, updateDTO);
+        return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
+    }
+    @PutMapping("/admin/flights/changeFlightLocation/{flightId}")
+    public ResponseEntity<FlightDTO> updateFlightLocation(
+            @PathVariable Long flightId,
+            @Valid @RequestBody FlightLocationUpdateDTO updateDTO) {
+        FlightDTO updatedFlight = flightService.updateFlightLocation(flightId, updateDTO);
+        return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
+    }
+    @PutMapping("/admin/flights/changeFlightPrice/{flightId}")
+    public ResponseEntity<FlightDTO> updateFlightPrices(
+            @PathVariable Long flightId,
+            @Valid @RequestBody FlightPriceUpdateDTO updateDTO) {
+        FlightDTO updatedFlight = flightService.updateFlightPrices(flightId, updateDTO);
+        return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
+    }
+    @DeleteMapping("/admin/deleteFlight/{flightId}")
+    public ResponseEntity<String> deleteFlight(@PathVariable Long flightId) {
+        flightService.deleteFlight(flightId);
+        return new ResponseEntity<>("Flight deleted successfully", HttpStatus.OK);
     }
 }
