@@ -1,5 +1,8 @@
 package com.team9.ece1779f24.model;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,10 +50,12 @@ public class Flight {
     private Integer totalSeats;
 
     @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "plane_id")
     private Plane plane;
 
     @OneToMany(mappedBy = "flight")
+    @JsonManagedReference
     private List<Ticket> tickets = new ArrayList<>();
 
     // Getters and setters

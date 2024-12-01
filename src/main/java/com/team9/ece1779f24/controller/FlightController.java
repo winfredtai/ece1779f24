@@ -22,16 +22,25 @@ public class FlightController {
     }
 
     @GetMapping("/public/flights/all")
-    public ResponseEntity<FlightResponse> getAllFlights(
+    public ResponseEntity<FlightDTOResponse> getAllFlights(
             @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_FLIGHT_BY, required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
-        FlightResponse flightResponse = flightService.getAllFlights(pageNumber, pageSize, sortBy, sortOrder);
+        FlightDTOResponse flightDTOResponse = flightService.getAllFlights(pageNumber, pageSize, sortBy, sortOrder);
+        return new ResponseEntity<>(flightDTOResponse, HttpStatus.OK);
+    }
+    @GetMapping("/admin/flights/all")
+    public ResponseEntity<FlightAdminResponse> getAllFlightEntities(
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_FLIGHT_BY, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
+        FlightAdminResponse flightResponse = flightService.getAllFlightAdmin(pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(flightResponse, HttpStatus.OK);
     }
     @GetMapping("/public/flights/search")
-    public ResponseEntity<FlightResponse> searchFlights(
+    public ResponseEntity<FlightDTOResponse> searchFlights(
             @RequestParam String departureCity,
             @RequestParam String arrivalCity,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -40,9 +49,9 @@ public class FlightController {
             @RequestParam(defaultValue = AppConstants.SORT_FLIGHT_BY, required = false) String sortBy,
             @RequestParam(defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder
     ) {
-        FlightResponse flightResponse = flightService.searchFlights(
+        FlightDTOResponse flightDTOResponse = flightService.searchFlights(
                 departureCity, arrivalCity, date, pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<>(flightResponse, HttpStatus.OK);
+        return new ResponseEntity<>(flightDTOResponse, HttpStatus.OK);
     }
 
     @GetMapping("/public/flights/{flightNumber}")

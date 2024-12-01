@@ -80,6 +80,7 @@ public class DataLoader {
                         .seatNumber(seatNum + "A")
                         .airlineName("Team9 Airlines")
                         .flight(flight)
+                        .flightNumber(flight.getFlightNumber())  // Add this line
                         .build();
 
                 tickets.add(ticket);

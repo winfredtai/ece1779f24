@@ -6,6 +6,8 @@ import com.team9.ece1779f24.model.Plane;
 import com.team9.ece1779f24.payload.*;
 import com.team9.ece1779f24.repositories.FlightRepository;
 import com.team9.ece1779f24.repositories.PlaneRepository;
+import com.team9.ece1779f24.repositories.TicketRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,14 +25,15 @@ public class FlightServiceImpl implements FlightService {
     private final FlightRepository flightRepository;
     private final PlaneRepository planeRepository;
     private final ModelMapper modelMapper;
-
+    private final TicketRepository ticketRepository;
     @Autowired
-    public FlightServiceImpl(FlightRepository flightRepository, PlaneRepository planeRepository) {
+    public FlightServiceImpl(FlightRepository flightRepository, PlaneRepository planeRepository, TicketRepository ticketRepository) {
         this.flightRepository = flightRepository;
         this.planeRepository = planeRepository;
         this.modelMapper = new ModelMapper();
+        this.ticketRepository = ticketRepository;
     }
-    public FlightResponse getAllFlights(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+    public FlightDTOResponse getAllFlights(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("asc") ?
                 Sort.by(sortBy).ascending():
                 Sort.by(sortBy).descending();
@@ -43,13 +46,35 @@ public class FlightServiceImpl implements FlightService {
                 .stream()
                 .map(flight -> modelMapper.map(flight, FlightDTO.class))
                 .toList();
-        FlightResponse flightResponse = new FlightResponse();
-        flightResponse.setContent(flightDTOs);
+        FlightDTOResponse flightDTOResponse = new FlightDTOResponse();
+        flightDTOResponse.setContent(flightDTOs);
+        flightDTOResponse.setPageNumber(pageNumber);
+        flightDTOResponse.setPageSize(pageSize);
+        flightDTOResponse.setTotalElements(flightPage.getTotalElements());
+        flightDTOResponse.setTotalPages(flightPage.getTotalPages());
+        flightDTOResponse.setLastPage(flightPage.isLast());
+        return flightDTOResponse;
+    }
+    public FlightAdminResponse getAllFlightAdmin(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending():
+                Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Flight> flightPage = flightRepository.findAll(pageable);
+        List<Flight> flights = flightPage.getContent();
+
+        if (flights.isEmpty())
+            throw new APIException("No Flight is available in this page.");
+
+        FlightAdminResponse flightResponse = new FlightAdminResponse();
+        flightResponse.setContent(flights);  // Directly set Flight entities instead of DTOs
         flightResponse.setPageNumber(pageNumber);
         flightResponse.setPageSize(pageSize);
         flightResponse.setTotalElements(flightPage.getTotalElements());
         flightResponse.setTotalPages(flightPage.getTotalPages());
         flightResponse.setLastPage(flightPage.isLast());
+
         return flightResponse;
     }
     public FlightDTO getFlightByFlightNumber(String flightNumber) {
@@ -58,13 +83,13 @@ public class FlightServiceImpl implements FlightService {
 
         return modelMapper.map(flight, FlightDTO.class);
     }
-    public FlightResponse searchFlights(String departureCity,
-                                        String arrivalCity,
-                                        LocalDate date,
-                                        Integer pageNumber,
-                                        Integer pageSize,
-                                        String sortBy,
-                                        String sortOrder) {
+    public FlightDTOResponse searchFlights(String departureCity,
+                                           String arrivalCity,
+                                           LocalDate date,
+                                           Integer pageNumber,
+                                           Integer pageSize,
+                                           String sortBy,
+                                           String sortOrder) {
 
         Sort sort = sortOrder.equalsIgnoreCase("asc") ?
                 Sort.by(sortBy).ascending() :
@@ -89,15 +114,15 @@ public class FlightServiceImpl implements FlightService {
                 .map(flight -> modelMapper.map(flight, FlightDTO.class))
                 .toList();
 
-        FlightResponse flightResponse = new FlightResponse();
-        flightResponse.setContent(flightDTOs);
-        flightResponse.setPageNumber(pageNumber);
-        flightResponse.setPageSize(pageSize);
-        flightResponse.setTotalElements(flightPage.getTotalElements());
-        flightResponse.setTotalPages(flightPage.getTotalPages());
-        flightResponse.setLastPage(flightPage.isLast());
+        FlightDTOResponse flightDTOResponse = new FlightDTOResponse();
+        flightDTOResponse.setContent(flightDTOs);
+        flightDTOResponse.setPageNumber(pageNumber);
+        flightDTOResponse.setPageSize(pageSize);
+        flightDTOResponse.setTotalElements(flightPage.getTotalElements());
+        flightDTOResponse.setTotalPages(flightPage.getTotalPages());
+        flightDTOResponse.setLastPage(flightPage.isLast());
 
-        return flightResponse;
+        return flightDTOResponse;
     }
     public FlightDTO createFlight(FlightDTO flightDTO) {
         // Validate flight number doesn't exist
@@ -184,16 +209,24 @@ public class FlightServiceImpl implements FlightService {
         Flight updatedFlight = flightRepository.save(flight);
         return modelMapper.map(updatedFlight, FlightDTO.class);
     }
+    @Transactional
     public FlightDTO updateFlightNumber(Long flightId, FlightNumberUpdateDTO updateDTO) {
+        // Find existing flight
         Flight flight = flightRepository.findById(flightId)
                 .orElseThrow(() -> new APIException("Flight not found with id: " + flightId));
 
+        // Check if new flight number exists
         if (flightRepository.existsByFlightNumber(updateDTO.getNewFlightNumber())) {
             throw new APIException("Flight number " + updateDTO.getNewFlightNumber() + " already exists");
         }
 
+        // Update flight number
+        String oldFlightNumber = flight.getFlightNumber();
         flight.setFlightNumber(updateDTO.getNewFlightNumber());
         Flight updatedFlight = flightRepository.save(flight);
+
+        // Update all associated tickets
+        ticketRepository.updateFlightNumberByFlightId(flightId, updateDTO.getNewFlightNumber());
         return modelMapper.map(updatedFlight, FlightDTO.class);
     }
     public FlightDTO updateFlightTime(Long flightId, FlightTimeUpdateDTO updateDTO) {

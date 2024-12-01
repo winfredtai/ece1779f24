@@ -1,19 +1,13 @@
 package com.team9.ece1779f24.service;
 
-import com.team9.ece1779f24.model.Flight;
 import com.team9.ece1779f24.payload.*;
-import com.team9.ece1779f24.repositories.FlightRepository;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public interface FlightService {
-    public FlightResponse getAllFlights(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
+    public FlightDTOResponse getAllFlights(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
     public FlightDTO getFlightByFlightNumber(String flightNumber);
-    FlightResponse searchFlights(String departureCity, String arrivalCity, LocalDate date, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+    FlightDTOResponse searchFlights(String departureCity, String arrivalCity, LocalDate date, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     FlightDTO createFlight(FlightDTO flightDTO);
 
@@ -30,4 +24,6 @@ public interface FlightService {
     FlightDTO updateFlightPrices(Long flightId, FlightPriceUpdateDTO updateDTO);
 
     void deleteFlight(Long flightId);
+
+    FlightAdminResponse getAllFlightAdmin(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 }

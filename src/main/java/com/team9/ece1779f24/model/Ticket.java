@@ -1,5 +1,6 @@
 package com.team9.ece1779f24.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.team9.ece1779f24.enums.TicketClassEnum;
 import com.team9.ece1779f24.enums.TicketStatusEnum;
 import jakarta.persistence.*;
@@ -40,12 +41,16 @@ public class Ticket {
     @Column(length = 100)
     private String airlineName;
 
+    @Column(length = 20)
+    private String flightNumber;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "flight_id")
+    @JsonBackReference
     private Flight flight;
 
     @ManyToOne

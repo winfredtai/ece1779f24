@@ -1,5 +1,6 @@
 package com.team9.ece1779f24.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,6 +34,7 @@ public class Plane {
     private LocalDate manufacturingDate;
 
     @OneToMany(mappedBy = "plane")
+    @JsonBackReference
     private List<Flight> flights = new ArrayList<>();
 
     // Getters and setters
