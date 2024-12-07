@@ -18,7 +18,11 @@ public class TicketController {
     public TicketController(TicketService ticketService) {
         this.ticketService = ticketService;
     }*/
-
+    // GET ticket by flightid only active
+    // GET ticket ALL ticket
+    // Set TIcket status
+    // Set User id
+    // get all avail ticket by flightid
     @GetMapping
     public ResponseEntity<FlightDTOResponse> getAllTickets() {
         // Implementation
