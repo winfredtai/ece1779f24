@@ -2,8 +2,6 @@ package com.team9.ece1779f24.controller;
 
 import com.team9.ece1779f24.config.AppConstants;
 import com.team9.ece1779f24.enums.TicketStatus;
-import com.team9.ece1779f24.model.Ticket;
-import com.team9.ece1779f24.payload.FlightDTOResponse;
 import com.team9.ece1779f24.payload.TicketDTO;
 import com.team9.ece1779f24.payload.TicketResponse;
 import com.team9.ece1779f24.service.TicketService;
@@ -13,10 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.IIOException;
 import java.io.IOException;
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/tickets")
