@@ -156,4 +156,10 @@ public class AuthController {
                         cookie.toString())
                 .body(new APIResponse("You've been signed out!", true));
     }
+
+    // for AWS health monitor
+    @GetMapping("/health")
+    public ResponseEntity<HttpStatus> awsLoadBalancerUtil(){
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
