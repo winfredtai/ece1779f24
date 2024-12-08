@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FlightDTO {
+    @NotNull
+    private Long flightId;
+
     @NotBlank(message = "Flight number is required")
     private String flightNumber;
 
