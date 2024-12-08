@@ -1,0 +1,38 @@
+Manifest-Version: 1.0
+Main-Class: com.team9.ece1779f24.Ece1779f24Application
+Class-Path: slf4j-api-2.0.16.jar thymeleaf-extras-springsecurity6-3.1.2.
+ RELEASE.jar jjwt-impl-0.12.6.jar log4j-to-slf4j-2.23.1.jar spring-secur
+ ity-crypto-6.3.4.jar spring-context-6.1.14.jar spring-webmvc-6.1.14.jar
+  jjwt-api-0.12.6.jar thymeleaf-spring6-3.1.2.RELEASE.jar spring-express
+ ion-6.1.14.jar micrometer-commons-1.13.6.jar jandex-3.1.2.jar jakarta.a
+ ctivation-api-2.1.3.jar spring-boot-starter-web-3.3.5.jar jackson-datat
+ ype-jdk8-2.17.2.jar jackson-module-parameter-names-2.17.2.jar spring-tx
+ -6.1.14.jar spring-aspects-6.1.14.jar HikariCP-5.1.0.jar spring-jcl-6.1
+ .14.jar spring-boot-starter-3.3.5.jar h2-2.2.224.jar mysql-connector-j-
+ 8.3.0.jar jackson-core-2.17.2.jar modelmapper-3.0.0.jar spring-boot-sta
+ rter-tomcat-3.3.5.jar spring-core-6.1.14.jar jackson-annotations-2.17.2
+ .jar spring-security-core-6.3.4.jar hibernate-commons-annotations-6.0.6
+ .Final.jar aspectjweaver-1.9.22.1.jar spring-security-web-6.3.4.jar log
+ back-classic-1.5.11.jar spring-boot-starter-validation-3.3.2.jar spring
+ -data-commons-3.3.5.jar snakeyaml-2.2.jar tomcat-embed-core-10.1.31.jar
+  logback-core-1.5.11.jar log4j-api-2.23.1.jar jakarta.annotation-api-2.
+ 1.1.jar spring-aop-6.1.14.jar spring-boot-autoconfigure-3.3.5.jar sprin
+ g-boot-starter-data-jpa-3.3.5.jar jaxb-runtime-4.0.5.jar spring-boot-st
+ arter-json-3.3.5.jar istack-commons-runtime-4.1.2.jar spring-data-jpa-3
+ .3.5.jar byte-buddy-1.14.19.jar spring-security-config-6.3.4.jar hibern
+ ate-core-6.5.3.Final.jar classmate-1.7.0.jar micrometer-observation-1.1
+ 3.6.jar spring-boot-devtools-3.3.5.jar jackson-databind-2.17.2.jar spri
+ ng-web-6.1.14.jar spring-beans-6.1.14.jar thymeleaf-3.1.2.RELEASE.jar s
+ pring-boot-starter-jdbc-3.3.5.jar jakarta.persistence-api-3.1.0.jar spr
+ ing-boot-starter-logging-3.3.5.jar spring-jdbc-6.1.14.jar unbescape-1.1
+ .6.RELEASE.jar jul-to-slf4j-2.0.16.jar spring-boot-docker-compose-3.3.5
+ .jar tomcat-embed-el-10.1.31.jar hibernate-validator-8.0.1.Final.jar ja
+ karta.xml.bind-api-4.0.2.jar spring-boot-3.3.5.jar jaxb-core-4.0.5.jar 
+ jakarta.inject-api-2.0.1.jar spring-boot-starter-security-3.3.5.jar att
+ oparser-2.0.7.RELEASE.jar jakarta.validation-api-3.0.2.jar angus-activa
+ tion-2.0.2.jar txw2-4.0.5.jar jakarta.transaction-api-2.0.1.jar spring-
+ orm-6.1.14.jar tomcat-embed-websocket-10.1.31.jar jjwt-jackson-0.12.6.j
+ ar antlr4-runtime-4.13.0.jar spring-boot-starter-aop-3.3.5.jar jackson-
+ datatype-jsr310-2.17.2.jar lombok-1.18.34.jar jboss-logging-3.5.3.Final
+ .jar
+
