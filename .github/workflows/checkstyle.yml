@@ -9,29 +9,28 @@ on:
 jobs:
   checkstyle:
     runs-on: ubuntu-22.04
-
     steps:
-    - name: Checkout to the code directory
-      uses: actions/checkout@v4
+      - name: Checkout to the code directory
+        uses: actions/checkout@v4
 
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'corretto'
-        java-version: '21' 
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '21'
 
-    - name: Check Maven version
-      run: mvn -version
+      - name: Check Maven version
+        run: mvn -version
 
-    - name: Install dependencies
-      run: mvn install -DskipTests
+      - name: Install dependencies
+        run: mvn install -DskipTests
 
-    - name: Run Checkstyle
-      run: mvn checkstyle:check -Dcheckstyle.config.location=./.github/google_checks.xml
+      - name: Run Checkstyle
+        run: mvn checkstyle:check -Dcheckstyle.config.location=./.github/google_checks.xml
 
-    - name: Upload Checkstyle report
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: checkstyle-report
-        path: target/checkstyle-result.xml
+      - name: Upload Checkstyle report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkstyle-report
+          path: target/checkstyle-result.xml
