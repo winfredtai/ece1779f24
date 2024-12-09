@@ -40,7 +40,7 @@ Registers a new user.
     "username": "string",
     "email": "string",
     "password": "string",
-    "role": ["user", "admin", "seller"] // Optional
+    "role": ["user", "admin", "agent"] 
 }
 ```
 
