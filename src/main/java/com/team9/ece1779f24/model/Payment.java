@@ -32,4 +32,14 @@ public class Payment {
 
     @OneToOne(mappedBy = "payment")
     private Order order;
+
+    // for payment object instantiation within order service
+    public Payment(String paymentMethod, String paymentGatewayId, String paymentGatewayStatus,
+                   String paymentGatewayResponseMessage, String paymentGatewayName) {
+        this.paymentMethod = paymentMethod;
+        this.paymentGatewayId = paymentGatewayId;
+        this.paymentGatewayStatus = paymentGatewayStatus;
+        this.paymentGatewayResponseMessage = paymentGatewayResponseMessage;
+        this.paymentGatewayName = paymentGatewayName;
+    }
 }

@@ -1,5 +1,6 @@
 package com.team9.ece1779f24.controller;
 
+import com.team9.ece1779f24.model.User;
 import com.team9.ece1779f24.payload.OrderDTO;
 import com.team9.ece1779f24.payload.OrderRequestDTO;
 import com.team9.ece1779f24.security.jwt.JwtUtils;
@@ -8,15 +9,14 @@ import com.team9.ece1779f24.util.AuthUtil;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.*;
 
@@ -31,14 +31,11 @@ public class OrderController {
     @PostMapping("/order/users/payments/{paymentMethod}")
     public ResponseEntity<OrderDTO> orderProducts(@PathVariable String paymentMethod,
                                                   @RequestBody OrderRequestDTO orderRequestDTO) {
-        String emailId = authUtil.loggedInEmail();
+        User currentUser = authUtil.loggedInUser();
         OrderDTO order = orderService.placeOrder(
-                emailId,
+                currentUser.getUserId(),
                 paymentMethod,
-                orderRequestDTO.getPaymentGatewayName(),
-                orderRequestDTO.getPaymentGatewayId(),
-                orderRequestDTO.getPaymentGatewayStatus(),
-                orderRequestDTO.getPaymentGatewayResponseMessage()
+                orderRequestDTO
         );
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
@@ -64,8 +61,6 @@ public class OrderController {
 
         return ResponseEntity.ok(response);
     }
-
-
 
     @PreAuthorize("hasRole('AGENT')")
     @GetMapping("/order/user")

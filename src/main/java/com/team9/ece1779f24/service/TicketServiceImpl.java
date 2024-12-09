@@ -89,10 +89,10 @@ public class TicketServiceImpl implements TicketService{
 
     // Helper method
     private TicketResponse getTicketResponse(Integer pageNumber, Integer pageSize, Page<Ticket> ticketPage) {
-        List<Ticket> tikets = ticketPage.getContent();
-        if (tikets.isEmpty())
+        List<Ticket> tickets = ticketPage.getContent();
+        if (tickets.isEmpty())
             throw new APIException("No ticket is available in this flight.");
-        List<TicketDTO> flightDTOs = tikets
+        List<TicketDTO> flightDTOs = tickets
                 .stream()
                 .map(ticket -> modelMapper.map(ticket, TicketDTO.class))
                 .toList();

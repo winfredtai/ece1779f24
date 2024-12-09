@@ -16,6 +16,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name = "tickets")
 public class Ticket {
+    @Version
+    private Long version;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ticketId;
@@ -28,6 +31,7 @@ public class Ticket {
     @Column(columnDefinition = "varchar(255) default 'ACTIVE'")
     private TicketStatus ticketStatus;
 
+    private String passengerName;
     private String description;
     private Double discount;
     private String imageAddress;
@@ -53,10 +57,10 @@ public class Ticket {
     @JsonBackReference
     private Flight flight;
 
-    @ManyToOne
-    private Order order;
+//    @ManyToOne
+//    private Order order;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private OrderTicket orderTicket;
 
     // for object instantiation convenience
