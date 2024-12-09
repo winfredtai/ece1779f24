@@ -86,9 +86,50 @@ public class FlightServiceImpl implements FlightService {
 
         return modelMapper.map(flight, FlightDTO.class);
     }
+//    public FlightDTOResponse searchFlights(String departureCity,
+//                                           String arrivalCity,
+//                                           LocalDate date,
+//                                           Integer pageNumber,
+//                                           Integer pageSize,
+//                                           String sortBy,
+//                                           String sortOrder) {
+//
+//        Sort sort = sortOrder.equalsIgnoreCase("asc") ?
+//                Sort.by(sortBy).ascending() :
+//                Sort.by(sortBy).descending();
+//
+//        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+//
+//        // Convert LocalDate to LocalDateTime range for the entire day
+//        LocalDateTime startOfDay = date.atStartOfDay();
+//        LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
+//
+//        Page<Flight> flightPage = flightRepository.findByDepartureCityIgnoreCaseAndArrivalCityIgnoreCaseAndDepartureTimeBetween(
+//                departureCity, arrivalCity, startOfDay, endOfDay, pageable);
+//
+//        List<Flight> flights = flightPage.getContent();
+//
+//        if (flights.isEmpty()) {
+//            throw new APIException("No flights found for the specified criteria.");
+//        }
+//
+//        List<FlightDTO> flightDTOs = flights.stream()
+//                .map(flight -> modelMapper.map(flight, FlightDTO.class))
+//                .toList();
+//
+//        FlightDTOResponse flightDTOResponse = new FlightDTOResponse();
+//        flightDTOResponse.setContent(flightDTOs);
+//        flightDTOResponse.setPageNumber(pageNumber);
+//        flightDTOResponse.setPageSize(pageSize);
+//        flightDTOResponse.setTotalElements(flightPage.getTotalElements());
+//        flightDTOResponse.setTotalPages(flightPage.getTotalPages());
+//        flightDTOResponse.setLastPage(flightPage.isLast());
+//
+//        return flightDTOResponse;
+//    }
     public FlightDTOResponse searchFlights(String departureCity,
                                            String arrivalCity,
-                                           LocalDate date,
+                                           LocalDateTime dateTime,
                                            Integer pageNumber,
                                            Integer pageSize,
                                            String sortBy,
@@ -100,12 +141,12 @@ public class FlightServiceImpl implements FlightService {
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
-        // Convert LocalDate to LocalDateTime range for the entire day
-        LocalDateTime startOfDay = date.atStartOfDay();
-        LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
+        // Create a time window around the given dateTime (e.g., ±2 hours)
+        LocalDateTime searchStart = dateTime.minusHours(2);
+        LocalDateTime searchEnd = dateTime.plusHours(2);
 
         Page<Flight> flightPage = flightRepository.findByDepartureCityIgnoreCaseAndArrivalCityIgnoreCaseAndDepartureTimeBetween(
-                departureCity, arrivalCity, startOfDay, endOfDay, pageable);
+                departureCity, arrivalCity, searchStart, searchEnd, pageable);
 
         List<Flight> flights = flightPage.getContent();
 

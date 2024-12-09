@@ -12,12 +12,17 @@ import java.util.Optional;
 public interface FlightRepository extends JpaRepository<Flight, Long> {
     Optional<Flight> findByFlightNumber(String flightNumber);
 
+//    Page<Flight> findByDepartureCityIgnoreCaseAndArrivalCityIgnoreCaseAndDepartureTimeBetween(
+//                String departureCity,
+//                String arrivalCity,
+//                LocalDateTime departureTimeStart,
+//                LocalDateTime departureTimeEnd,
+//                Pageable pageable);
     Page<Flight> findByDepartureCityIgnoreCaseAndArrivalCityIgnoreCaseAndDepartureTimeBetween(
-                String departureCity,
-                String arrivalCity,
-                LocalDateTime departureTimeStart,
-                LocalDateTime departureTimeEnd,
-                Pageable pageable);
-
+            String departureCity,
+            String arrivalCity,
+            LocalDateTime departureTimeStart,
+            LocalDateTime departureTimeEnd,
+            Pageable pageable);
     boolean existsByFlightNumber(String flightNumber);
 }
