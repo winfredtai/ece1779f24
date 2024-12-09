@@ -19,12 +19,18 @@ public class OrderTicket {
 
     @ManyToOne
     @JoinColumn(name = "ticket_id")
-    private Ticket Ticket;
+    private Ticket ticket;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
-
+    private String passengerName;
     private Double discount;
     private Double orderedTicketPrice;
+
+    public OrderTicket(Ticket ticket, Order order, Double discount, Double orderedTicketPrice) {
+        this.ticket = ticket;
+        this.discount = discount;
+        this.orderedTicketPrice = orderedTicketPrice;
+    }
 }

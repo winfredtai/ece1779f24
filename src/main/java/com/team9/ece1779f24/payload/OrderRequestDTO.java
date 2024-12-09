@@ -9,9 +9,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderRequestDTO {
-    private Long userId;
     private Long flightId;
-    private List<String> tickets;
+    private List<String> ticketIds;
+    private List<String> passengerNames;
     private String paymentMethod;
     private String paymentGatewayId;
     private String paymentGatewayStatus;

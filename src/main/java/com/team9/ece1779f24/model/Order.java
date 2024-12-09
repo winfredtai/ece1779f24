@@ -26,19 +26,20 @@ public class Order {
     @Column(nullable = false)
     private String email;
 
-    @OneToMany(mappedBy = "order", cascade = { CascadeType.PERSIST,
-                                               CascadeType.MERGE })
+//    @OneToMany(mappedBy = "order", cascade = { CascadeType.PERSIST,
+//                                               CascadeType.MERGE })
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderTicket> orderTickets = new ArrayList<>();
 
     private LocalDateTime orderDate;
     private Double totalAmount;
     private String orderStatus;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    @OneToMany(mappedBy = "order")
-    private List<Ticket> tickets = new ArrayList<>();
+//    @OneToMany(mappedBy = "order")
+//    private List<Ticket> tickets = new ArrayList<>();
 
 }
