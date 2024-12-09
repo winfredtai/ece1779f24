@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @RestController
@@ -46,14 +48,14 @@ public class FlightController {
     public ResponseEntity<FlightDTOResponse> searchFlights(
             @RequestParam String departureCity,
             @RequestParam String arrivalCity,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
             @RequestParam(defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(defaultValue = AppConstants.SORT_FLIGHT_BY, required = false) String sortBy,
             @RequestParam(defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder
     ) {
         FlightDTOResponse flightDTOResponse = flightService.searchFlights(
-                departureCity, arrivalCity, date, pageNumber, pageSize, sortBy, sortOrder);
+                departureCity, arrivalCity, dateTime, pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(flightDTOResponse, HttpStatus.OK);
     }
 
@@ -66,6 +68,7 @@ public class FlightController {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/flights/create")
     public ResponseEntity<FlightDTO> createFlight(@Valid @RequestBody FlightDTO flightDTO) {
         FlightDTO createdFlight = flightService.createFlight(flightDTO);
@@ -113,6 +116,7 @@ public class FlightController {
         FlightDTO updatedFlight = flightService.updateFlightPrices(flightId, updateDTO);
         return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/admin/deleteFlight/{flightId}")
     public ResponseEntity<String> deleteFlight(@PathVariable Long flightId) {
         flightService.deleteFlight(flightId);

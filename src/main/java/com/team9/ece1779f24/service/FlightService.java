@@ -3,11 +3,12 @@ package com.team9.ece1779f24.service;
 import com.team9.ece1779f24.payload.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface FlightService {
     public FlightDTOResponse getAllFlights(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
     public FlightDTO getFlightByFlightNumber(String flightNumber);
-    FlightDTOResponse searchFlights(String departureCity, String arrivalCity, LocalDate date, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+    FlightDTOResponse searchFlights(String departureCity, String arrivalCity, LocalDateTime dateTime, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     FlightDTO createFlight(FlightDTO flightDTO);
 

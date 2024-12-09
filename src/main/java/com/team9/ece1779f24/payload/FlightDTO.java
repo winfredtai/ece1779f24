@@ -27,9 +27,11 @@ public class FlightDTO {
 
     @NotBlank(message = "Departure city is required")
     private String departureCity;
+    private String departureAirport;
 
     @NotBlank(message = "Arrival city is required")
     private String arrivalCity;
+    private String arrivalAirport;
 
     @Positive(message = "First class price must be positive")
     private Double firstPrice;
